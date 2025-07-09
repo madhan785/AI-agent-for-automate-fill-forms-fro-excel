@@ -5,15 +5,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from fuzzywuzzy import process
-
-# === Load Excel values exactly as displayed (with formatting) ===
 wb = load_workbook("Hhh.xlsx", data_only=False)
 ws = wb.active
 
-# Extract column headers
 headers = [cell.value for cell in ws[1]]
 
-# Build list of dictionaries for each row
 data = []
 for row in ws.iter_rows(min_row=2, values_only=False):
     row_data = {}
@@ -22,16 +18,12 @@ for row in ws.iter_rows(min_row=2, values_only=False):
     data.append(row_data)
 
 print(f"Total submissions to make: {len(data)}")
-
-# === Set up ChromeDriver ===
 options = Options()
 options.add_argument("--start-maximized")
 driver = webdriver.Chrome(service=Service(), options=options)
 
-# === Google Form Link ===
-form_url = "https://forms.gle/7MEhV43oD2uqtnk1A"
+form_url = "https://forms.gle/example.google.form"
 
-# === Function to fill form ===
 def fill_google_form(row_data):
     driver.get(form_url)
     time.sleep(3)
@@ -69,12 +61,10 @@ def fill_google_form(row_data):
     except Exception as e:
         print("❌ Submit button error:", e)
 
-# === Loop through each row and fill form ===
 for index, row in enumerate(data):
     print(f"\n🚀 Submitting row {index + 1}...")
     fill_google_form(row)
     if index < len(data) - 1:
         print("⏳ Waiting 10 seconds before next submission...")
         time.sleep(10)
-
 driver.quit()
